@@ -1,49 +1,44 @@
 import React, { useState } from 'react'
+import { TodoInterface } from './TodoInterface'
 
 interface Props {
-    title: string;
-    description: string;
+    saveTodo: (e: React.FormEvent, formData: TodoInterface | any) => void 
 }
 
-// useForm functional component
-const useForm = (callback: any, initialState = {}) => {
-    const [values, setValues] = useState(initialState);
+const TodoForm: React.FC<Props> = ({ saveTodo }) => {
 
-    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setValues({ 
-            ...values,
-            [event.target.name]: event.target.value 
-        });
-    };
+  const [formData, setFormData] = useState<TodoInterface | {}>()
 
-    // onSubmit
-    const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        await callback(); // triggering the callback
-    };
+  const handleForm = (e: React.FormEvent<HTMLInputElement>): void => {
+    setFormData({
+      ...formData,
+      [e.currentTarget.id]: e.currentTarget.value,
+    })
+  }
 
-    // return values
-    return {
-        onChange,
-        onSubmit,
-        values,
-    };
-
+  return (
+    <div>
+      <div>
+        <form className='Form' onSubmit={(e) => saveTodo(e, formData)}>
+        <label htmlFor='title'>Name</label>
+          <input 
+            name="title" 
+            type="text" 
+            id="todo-title"
+            onChange={handleForm} />
+          <label htmlFor='description'>Description</label>
+          <input 
+            name="description" 
+            type="text" 
+            id="todo-description"
+            onChange={handleForm} />
+        </form>
+      </div>
+      <div>
+        <button></button>
+      </div>
+    </div>
+  );
 }
 
-export const TodoForm: React.FC<Props> = ({title, description}) => {
-    return (
-        <div>
-            <form>
-                <input 
-                    name="title" 
-                    type="text" 
-                    id="todo-title" />
-                <input 
-                    name="description" 
-                    type="text" 
-                    id="todo-description" />
-            </form>
-        </div>
-    );
-}
+export default TodoForm;
